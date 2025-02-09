@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState } from 'react';
 import NumberInput from '../components/NumberInput';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
@@ -8,10 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 
 type Currency = 'BRL' | 'USD' | 'EUR';
 
-interface ExchangeRates {
-  USD: number;
-  EUR: number;
-}
+const FIXED_RATE = 5; // Taxa fixa: 5 BRL = 1 USD/EUR
 
 const formatCurrency = (value: number, currency: Currency): string => {
   const currencyOptions: { [key in Currency]: { locale: string; currency: string } } = {
@@ -40,41 +38,8 @@ const Index = () => {
   const [projectCost, setProjectCost] = useState('0');
   const [netProfit, setNetProfit] = useState('0');
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>('BRL');
-  const [exchangeRates, setExchangeRates] = useState<ExchangeRates>({ USD: 1, EUR: 1 });
-  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchExchangeRates = async () => {
-      try {
-        const response = await fetch('https://api.exchangerate-api.com/v4/latest/BRL');
-        const data = await response.json();
-        setExchangeRates({
-          USD: data.rates.USD,
-          EUR: data.rates.EUR
-        });
-        setIsLoading(false);
-        
-        toast({
-          title: "Cotação atual",
-          description: `1 BRL = ${data.rates.USD.toFixed(4)} USD | 1 BRL = ${data.rates.EUR.toFixed(4)} EUR`,
-          duration: 5000,
-        });
-      } catch (error) {
-        console.error('Error fetching exchange rates:', error);
-        setIsLoading(false);
-        
-        toast({
-          variant: "destructive",
-          title: "Erro ao carregar cotações",
-          description: "Não foi possível obter as cotações atuais.",
-        });
-      }
-    };
-
-    fetchExchangeRates();
-  }, [toast]);
 
   const calculateResults = () => {
     const pricePerHourNum = parseCurrencyInput(pricePerHour);
@@ -85,11 +50,21 @@ const Index = () => {
     const totalCost = costPerHourNum * hoursNum;
     const profit = totalPrice - totalCost;
 
-    const rate = selectedCurrency === 'BRL' ? 1 : exchangeRates[selectedCurrency];
+    // Conversão usando taxa fixa
+    const rate = selectedCurrency === 'BRL' ? 1 : (1 / FIXED_RATE);
     
     setProjectPrice(formatCurrency(totalPrice * rate, selectedCurrency));
     setProjectCost(formatCurrency(totalCost * rate, selectedCurrency));
     setNetProfit(formatCurrency(profit * rate, selectedCurrency));
+
+    // Mostra a taxa fixa atual
+    if (selectedCurrency !== 'BRL') {
+      toast({
+        title: "Taxa de conversão fixa",
+        description: `1 ${selectedCurrency} = ${FIXED_RATE} BRL`,
+        duration: 3000,
+      });
+    }
   };
 
   const containerVariants = {
@@ -214,9 +189,8 @@ const Index = () => {
             <Button
               onClick={calculateResults}
               className="w-full h-12 sm:h-14 bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200 text-base sm:text-lg font-semibold"
-              disabled={isLoading}
             >
-              {isLoading ? 'Carregando taxas...' : 'Calcular'}
+              Calcular
             </Button>
           </motion.div>
         </div>
