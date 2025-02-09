@@ -37,75 +37,114 @@ const Index = () => {
     setNetProfit(formatCurrency(profit));
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.3 }
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-purple-800 p-4">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 space-y-6"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8"
       >
         <motion.h1 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-2xl font-semibold text-center text-gray-800 mb-8"
+          variants={itemVariants}
+          className="text-3xl font-bold text-center text-gray-800 mb-8"
         >
           Calculadora de Projeto
         </motion.h1>
 
         <div className="space-y-6">
-          <NumberInput
-            label="Preço por Hora"
-            value={pricePerHour}
-            onChange={setPricePerHour}
-            prefix="R$"
-          />
+          <motion.div variants={itemVariants}>
+            <NumberInput
+              label="Preço por Hora"
+              value={pricePerHour}
+              onChange={setPricePerHour}
+              prefix="R$"
+              className="text-right font-medium"
+            />
+          </motion.div>
 
-          <NumberInput
-            label="Custo por Hora"
-            value={costPerHour}
-            onChange={setCostPerHour}
-            prefix="R$"
-          />
+          <motion.div variants={itemVariants}>
+            <NumberInput
+              label="Custo por Hora"
+              value={costPerHour}
+              onChange={setCostPerHour}
+              prefix="R$"
+              className="text-right font-medium"
+            />
+          </motion.div>
 
-          <NumberInput
-            label="Quantidade de Horas"
-            value={hours}
-            onChange={setHours}
-          />
+          <motion.div variants={itemVariants}>
+            <NumberInput
+              label="Quantidade de Horas"
+              value={hours}
+              onChange={setHours}
+              className="text-right font-medium"
+            />
+          </motion.div>
 
-          <div className="pt-6 border-t border-gray-100">
+          <motion.div variants={itemVariants} className="pt-6 border-t border-gray-100">
             <NumberInput
               label="Preço do Projeto"
               value={projectPrice}
               onChange={() => {}}
               readOnly
-              className="bg-gray-50"
+              className="text-right font-semibold text-green-600"
             />
-          </div>
+          </motion.div>
 
-          <NumberInput
-            label="Custo do Projeto"
-            value={projectCost}
-            onChange={() => {}}
-            readOnly
-            className="bg-gray-50"
-          />
+          <motion.div variants={itemVariants}>
+            <NumberInput
+              label="Custo do Projeto"
+              value={projectCost}
+              onChange={() => {}}
+              readOnly
+              className="text-right font-semibold text-red-600"
+            />
+          </motion.div>
 
-          <NumberInput
-            label="Ganho Líquido"
-            value={netProfit}
-            onChange={() => {}}
-            readOnly
-            className="bg-gray-50"
-          />
+          <motion.div variants={itemVariants}>
+            <NumberInput
+              label="Ganho Líquido"
+              value={netProfit}
+              onChange={() => {}}
+              readOnly
+              className="text-right font-bold text-purple-600 text-lg"
+            />
+          </motion.div>
 
-          <Button
-            onClick={calculateResults}
-            className="w-full h-12 bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200"
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            Calcular
-          </Button>
+            <Button
+              onClick={calculateResults}
+              className="w-full h-14 bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200 text-lg font-semibold"
+            >
+              Calcular
+            </Button>
+          </motion.div>
         </div>
       </motion.div>
     </div>
