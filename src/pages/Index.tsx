@@ -139,9 +139,9 @@ const Index = () => {
               value={[hours]}
               onValueChange={(value) => setHours(value[0])}
               min={1}
-              max={100}
+              max={160}
               step={1}
-              className="py-4"
+              className="py-4 [&>div]:!bg-purple-600 [&>div[data-orientation=horizontal]]:!h-3 [&>div[role=slider]]:!h-6 [&>div[role=slider]]:!w-6 [&>div[role=slider]]:!bg-purple-700 hover:[&>div[role=slider]]:!bg-purple-800 transition-all duration-200"
             />
           </motion.div>
 
