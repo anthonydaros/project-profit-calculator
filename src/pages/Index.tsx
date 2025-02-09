@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import NumberInput from '../components/NumberInput';
 import { Button } from "@/components/ui/button";
@@ -74,6 +73,13 @@ const Index = () => {
     }
   };
 
+  const handleHoursInput = (value: string) => {
+    const numValue = parseInt(value);
+    if (!isNaN(numValue) && numValue >= 1 && numValue <= 160) {
+      setHours(numValue);
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -132,9 +138,19 @@ const Index = () => {
           </motion.div>
 
           <motion.div variants={itemVariants} className="space-y-2">
-            <label className="text-gray-500 font-medium">
-              Quantidade de Horas: {hours}
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-gray-500 font-medium">
+                Quantidade de Horas:
+              </label>
+              <input
+                type="number"
+                value={hours}
+                onChange={(e) => handleHoursInput(e.target.value)}
+                className="w-16 text-right text-gray-700 font-medium bg-transparent border-b border-gray-300 focus:border-purple-600 focus:outline-none"
+                min={1}
+                max={160}
+              />
+            </div>
             <Slider
               value={[hours]}
               onValueChange={(value) => setHours(value[0])}
