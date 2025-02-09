@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from '../hooks/use-mobile';
+import { useToast } from "@/hooks/use-toast";
 
 type Currency = 'BRL' | 'USD' | 'EUR';
 
@@ -42,6 +43,7 @@ const Index = () => {
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates>({ USD: 1, EUR: 1 });
   const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
@@ -53,14 +55,26 @@ const Index = () => {
           EUR: data.rates.EUR
         });
         setIsLoading(false);
+        
+        toast({
+          title: "Cotação atual",
+          description: `1 BRL = ${data.rates.USD.toFixed(4)} USD | 1 BRL = ${data.rates.EUR.toFixed(4)} EUR`,
+          duration: 5000,
+        });
       } catch (error) {
         console.error('Error fetching exchange rates:', error);
         setIsLoading(false);
+        
+        toast({
+          variant: "destructive",
+          title: "Erro ao carregar cotações",
+          description: "Não foi possível obter as cotações atuais.",
+        });
       }
     };
 
     fetchExchangeRates();
-  }, []);
+  }, [toast]);
 
   const calculateResults = () => {
     const pricePerHourNum = parseCurrencyInput(pricePerHour);
