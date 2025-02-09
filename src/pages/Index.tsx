@@ -27,7 +27,12 @@ const formatCurrency = (value: number, currency: Currency): string => {
 };
 
 const parseCurrencyInput = (value: string): number => {
-  return Number(value.replace(/[^\d,-]/g, '').replace(',', '.')) || 0;
+  // Remove todos os caracteres exceto números, vírgula e ponto
+  const cleanValue = value.replace(/[^\d,-]/g, '');
+  // Substitui vírgula por ponto para o parseFloat funcionar
+  const normalizedValue = cleanValue.replace(',', '.');
+  // Converte para número
+  return parseFloat(normalizedValue) || 0;
 };
 
 const Index = () => {
@@ -42,17 +47,20 @@ const Index = () => {
   const { toast } = useToast();
 
   const calculateResults = () => {
+    // Parseia os valores de entrada
     const pricePerHourNum = parseCurrencyInput(pricePerHour);
     const costPerHourNum = parseCurrencyInput(costPerHour);
     const hoursNum = Number(hours) || 0;
 
+    // Calcula os totais em BRL
     const totalPrice = pricePerHourNum * hoursNum;
     const totalCost = costPerHourNum * hoursNum;
     const profit = totalPrice - totalCost;
 
-    // Conversão usando taxa fixa
+    // Define a taxa de conversão baseada na moeda selecionada
     const rate = selectedCurrency === 'BRL' ? 1 : (1 / FIXED_RATE);
     
+    // Atualiza os valores formatados
     setProjectPrice(formatCurrency(totalPrice * rate, selectedCurrency));
     setProjectCost(formatCurrency(totalCost * rate, selectedCurrency));
     setNetProfit(formatCurrency(profit * rate, selectedCurrency));
