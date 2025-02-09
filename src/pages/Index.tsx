@@ -3,7 +3,6 @@ import { useState } from 'react';
 import NumberInput from '../components/NumberInput';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from '../hooks/use-mobile';
 import { useToast } from "@/hooks/use-toast";
 
@@ -42,11 +41,10 @@ const Index = () => {
   const [projectPrice, setProjectPrice] = useState('0');
   const [projectCost, setProjectCost] = useState('0');
   const [netProfit, setNetProfit] = useState('0');
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency>('BRL');
   const isMobile = useIsMobile();
   const { toast } = useToast();
 
-  const calculateResults = () => {
+  const calculateResults = (currency: Currency) => {
     // Parseia os valores de entrada
     const pricePerHourNum = parseCurrencyInput(pricePerHour);
     const costPerHourNum = parseCurrencyInput(costPerHour);
@@ -58,18 +56,18 @@ const Index = () => {
     const profit = totalPrice - totalCost;
 
     // Define a taxa de conversão baseada na moeda selecionada
-    const rate = selectedCurrency === 'BRL' ? 1 : (1 / FIXED_RATE);
+    const rate = currency === 'BRL' ? 1 : (1 / FIXED_RATE);
     
     // Atualiza os valores formatados
-    setProjectPrice(formatCurrency(totalPrice * rate, selectedCurrency));
-    setProjectCost(formatCurrency(totalCost * rate, selectedCurrency));
-    setNetProfit(formatCurrency(profit * rate, selectedCurrency));
+    setProjectPrice(formatCurrency(totalPrice * rate, currency));
+    setProjectCost(formatCurrency(totalCost * rate, currency));
+    setNetProfit(formatCurrency(profit * rate, currency));
 
     // Mostra a taxa fixa atual
-    if (selectedCurrency !== 'BRL') {
+    if (currency !== 'BRL') {
       toast({
         title: "Taxa de conversão fixa",
-        description: `1 ${selectedCurrency} = ${FIXED_RATE} BRL`,
+        description: `1 ${currency} = ${FIXED_RATE} BRL`,
         duration: 3000,
       });
     }
@@ -104,30 +102,12 @@ const Index = () => {
         variants={containerVariants}
         className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-4 sm:p-8"
       >
-        <div className={`flex ${isMobile ? 'flex-col gap-4' : 'justify-between'} items-center mb-8`}>
-          <motion.h1 
-            variants={itemVariants}
-            className="text-2xl sm:text-3xl font-bold text-gray-800"
-          >
-            Calculadora de Projeto
-          </motion.h1>
-          
-          <motion.div variants={itemVariants}>
-            <Select value={selectedCurrency} onValueChange={(value: Currency) => {
-              setSelectedCurrency(value);
-              calculateResults();
-            }}>
-              <SelectTrigger className="w-[100px]">
-                <SelectValue placeholder="Moeda" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="BRL">BRL</SelectItem>
-                <SelectItem value="USD">USD</SelectItem>
-                <SelectItem value="EUR">EUR</SelectItem>
-              </SelectContent>
-            </Select>
-          </motion.div>
-        </div>
+        <motion.h1 
+          variants={itemVariants}
+          className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8 text-center"
+        >
+          Calculadora de Projeto
+        </motion.h1>
 
         <div className="space-y-4 sm:space-y-6">
           <motion.div variants={itemVariants}>
@@ -191,14 +171,25 @@ const Index = () => {
 
           <motion.div
             variants={itemVariants}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="grid grid-cols-3 gap-2 sm:gap-4"
           >
             <Button
-              onClick={calculateResults}
-              className="w-full h-12 sm:h-14 bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200 text-base sm:text-lg font-semibold"
+              onClick={() => calculateResults('BRL')}
+              className="h-12 sm:h-14 bg-green-600 hover:bg-green-700 text-white transition-colors duration-200 text-base sm:text-lg font-semibold"
             >
-              Calcular
+              Reais
+            </Button>
+            <Button
+              onClick={() => calculateResults('USD')}
+              className="h-12 sm:h-14 bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200 text-base sm:text-lg font-semibold"
+            >
+              Dólar
+            </Button>
+            <Button
+              onClick={() => calculateResults('EUR')}
+              className="h-12 sm:h-14 bg-yellow-600 hover:bg-yellow-700 text-white transition-colors duration-200 text-base sm:text-lg font-semibold"
+            >
+              Euro
             </Button>
           </motion.div>
         </div>
