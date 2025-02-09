@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import NumberInput from '../components/NumberInput';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useIsMobile } from '../hooks/use-mobile';
 
 type Currency = 'BRL' | 'USD' | 'EUR';
 
@@ -41,6 +41,7 @@ const Index = () => {
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>('BRL');
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates>({ USD: 1, EUR: 1 });
   const [isLoading, setIsLoading] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
@@ -70,7 +71,6 @@ const Index = () => {
     const totalCost = costPerHourNum * hoursNum;
     const profit = totalPrice - totalCost;
 
-    // Convert values based on selected currency
     const rate = selectedCurrency === 'BRL' ? 1 : exchangeRates[selectedCurrency];
     
     setProjectPrice(formatCurrency(totalPrice * rate, selectedCurrency));
@@ -105,12 +105,12 @@ const Index = () => {
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8"
+        className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-4 sm:p-8"
       >
-        <div className="flex justify-between items-center mb-8">
+        <div className={`flex ${isMobile ? 'flex-col gap-4' : 'justify-between'} items-center mb-8`}>
           <motion.h1 
             variants={itemVariants}
-            className="text-3xl font-bold text-gray-800"
+            className="text-2xl sm:text-3xl font-bold text-gray-800"
           >
             Calculadora de Projeto
           </motion.h1>
@@ -132,7 +132,7 @@ const Index = () => {
           </motion.div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <motion.div variants={itemVariants}>
             <NumberInput
               label="Preço por Hora"
@@ -162,7 +162,7 @@ const Index = () => {
             />
           </motion.div>
 
-          <motion.div variants={itemVariants} className="pt-6 border-t border-gray-100">
+          <motion.div variants={itemVariants} className="pt-4 sm:pt-6 border-t border-gray-100">
             <NumberInput
               label="Preço do Projeto"
               value={projectPrice}
@@ -199,7 +199,7 @@ const Index = () => {
           >
             <Button
               onClick={calculateResults}
-              className="w-full h-14 bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200 text-lg font-semibold"
+              className="w-full h-12 sm:h-14 bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200 text-base sm:text-lg font-semibold"
               disabled={isLoading}
             >
               {isLoading ? 'Carregando taxas...' : 'Calcular'}

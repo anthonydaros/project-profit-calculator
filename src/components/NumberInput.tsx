@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { motion } from 'framer-motion';
+import { useIsMobile } from '../hooks/use-mobile';
 
 interface NumberInputProps {
   label: string;
@@ -15,6 +16,8 @@ interface NumberInputProps {
 }
 
 const NumberInput = ({ label, value, onChange, readOnly = false, prefix, className }: NumberInputProps) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="relative w-full group">
       <Label 
@@ -28,7 +31,7 @@ const NumberInput = ({ label, value, onChange, readOnly = false, prefix, classNa
       </Label>
       <div className="relative">
         {prefix && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-sm sm:text-base">
             {prefix}
           </span>
         )}
@@ -37,7 +40,7 @@ const NumberInput = ({ label, value, onChange, readOnly = false, prefix, classNa
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={cn(
-            "h-14 pt-4 w-full bg-white focus:ring-2 focus:ring-purple-500 transition-all duration-200",
+            "h-12 sm:h-14 pt-4 w-full bg-white focus:ring-2 focus:ring-purple-500 transition-all duration-200 text-sm sm:text-base",
             prefix && "pl-8",
             readOnly && "bg-gray-50 focus:ring-0",
             className
@@ -50,3 +53,4 @@ const NumberInput = ({ label, value, onChange, readOnly = false, prefix, classNa
 };
 
 export default NumberInput;
+
