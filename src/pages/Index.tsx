@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useToast } from "@/hooks/use-toast";
+import { Slider } from "@/components/ui/slider";
 
 type Currency = 'BRL' | 'USD' | 'EUR';
 
@@ -37,7 +38,7 @@ const parseCurrencyInput = (value: string): number => {
 const Index = () => {
   const [pricePerHour, setPricePerHour] = useState('50,50');
   const [costPerHour, setCostPerHour] = useState('15,50');
-  const [hours, setHours] = useState('');
+  const [hours, setHours] = useState(1);
   const [projectPrice, setProjectPrice] = useState('0');
   const [projectCost, setProjectCost] = useState('0');
   const [netProfit, setNetProfit] = useState('0');
@@ -48,7 +49,7 @@ const Index = () => {
     // Parseia os valores de entrada
     const pricePerHourNum = parseCurrencyInput(pricePerHour);
     const costPerHourNum = parseCurrencyInput(costPerHour);
-    const hoursNum = Number(hours) || 0;
+    const hoursNum = hours;
 
     // Calcula os totais em BRL
     const totalPrice = pricePerHourNum * hoursNum;
@@ -130,12 +131,17 @@ const Index = () => {
             />
           </motion.div>
 
-          <motion.div variants={itemVariants}>
-            <NumberInput
-              label="Quantidade de Horas"
-              value={hours}
-              onChange={setHours}
-              className="text-right font-medium"
+          <motion.div variants={itemVariants} className="space-y-2">
+            <label className="text-gray-500 font-medium">
+              Quantidade de Horas: {hours}
+            </label>
+            <Slider
+              value={[hours]}
+              onValueChange={(value) => setHours(value[0])}
+              min={1}
+              max={100}
+              step={1}
+              className="py-4"
             />
           </motion.div>
 
